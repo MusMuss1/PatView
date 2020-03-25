@@ -62,7 +62,9 @@ public class Controller {
             pathBuilder.insert(0, item.getValue());
             pathBuilder.insert(0, "/");
         }
-
-
+        String path = pathBuilder.toString();
+        System.out.println(path);
+        Image I = new Image("file:"+path);
+        itemview.setImage(I);
     }
 }
