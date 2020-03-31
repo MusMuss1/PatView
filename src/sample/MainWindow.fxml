@@ -11,5 +11,7 @@
         <AnchorPane layoutX="588.0" layoutY="32.0" prefHeight="26.0" prefWidth="18.0" />
         <TreeView fx:id="view" layoutX="28.0" layoutY="65.0" onMouseClicked="#getitempath" prefHeight="631.0" prefWidth="570.0" />
         <ImageView fx:id="itemview" fitHeight="559.0" fitWidth="524.0" layoutX="728.0" layoutY="101.0" pickOnBounds="true" preserveRatio="true" />
+      <Button fx:id="btnforward" layoutX="1200.0" layoutY="671.0" mnemonicParsing="false" onAction="#goforward" text="&gt;&gt;" />
+      <Button fx:id="btnback" layoutX="1139.0" layoutY="671.0" mnemonicParsing="false" onAction="#goback" text="&lt;&lt;" />
     </children>
 </AnchorPane>

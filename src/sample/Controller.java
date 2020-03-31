@@ -40,6 +40,9 @@ public class Controller {
     @FXML
     private ImageView itemview;
 
+
+    private int index = 0;
+    final ArrayList<Image> pics = new ArrayList<>();
     //btnpath click event
     public void getpath(ActionEvent event) {
         final DirectoryChooser dc = new DirectoryChooser();   //Create FileBrowser for Directory chose
@@ -95,7 +98,9 @@ public class Controller {
     private List<BufferedImage> createImagesFromPDF(String path){       //convert PDF File to an Image using PDFBox | receives the path of type string
 
         List<BufferedImage> images = new ArrayList<BufferedImage>();                //create array to write the converted pdf pages as image into the array
+        pics.clear();
         PDDocument pdf = null;
+        index = 0;
         try {
             InputStream is = new FileInputStream(path);                 //InputStream to get the File (PDF File) from path
             pdf = PDDocument.load(is);                                  //pdf requires type File which got from InputStream
@@ -104,7 +109,8 @@ public class Controller {
                 BufferedImage img = pdfRenderer.renderImageWithDPI(page, 300, ImageType.RGB);
                 images.add(img);                                                                        //add buffered to the created array list
                 WritableImage writable = SwingFXUtils.toFXImage(images.get(page), null);                //create a writable image from buffered image, to write it to ImageView
-                itemview.setImage(writable);                                                            //set image to ImageView
+                pics.add(writable);
+                itemview.setImage(pics.get(index));                                                            //set image to ImageView
                 System.out.println(images.size());
             }
         }
@@ -118,5 +124,32 @@ public class Controller {
             e.printStackTrace();
         }
         return images;
+    }
+    public void goforward(ActionEvent event){
+        try{
+            if(index<pics.size()-1){
+                index++;
+                itemview.setImage(pics.get(index));
+            }else{
+                index = 0;
+                itemview.setImage(pics.get(index));
+            }
+        }catch (Exception e){
+
+        }
+    }
+    public void goback(ActionEvent event){
+        try{
+            if(index>0){
+                index--;
+                itemview.setImage(pics.get(index));
+            }else{
+                index=pics.size();
+                index--;
+                itemview.setImage(pics.get(index));
+            }
+        }catch (Exception e){
+
+        }
     }
 }
