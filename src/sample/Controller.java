@@ -1,15 +1,16 @@
 package sample;
 
+// https://github.com/MusMuss1/PatView
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 import javafx.scene.control.TreeView;
 
 import java.awt.*;
@@ -32,22 +33,21 @@ import javax.swing.*;
 
 public class Controller {
     @FXML
-    private AnchorPane dialog;
-    @FXML
     private TextField txtroot;
     @FXML
     private TreeView<String> view;
     @FXML
     private ImageView itemview;
+    @FXML
+    ScrollPane pane = new ScrollPane();
 
 
-    private int index = 0;
-    final ArrayList<Image> pics = new ArrayList<>();
+    private int index = 0;                                                                                                  //index type Integer saves PDF page number
+    final ArrayList<Image> pics = new ArrayList<>();                                                                        //create ArrayList<Image> Type
     //btnpath click event
     public void getpath(ActionEvent event) {
         final DirectoryChooser dc = new DirectoryChooser();                                                                 //Create FileBrowser for Directory chose
-        Stage dia = (Stage) dialog.getScene().getWindow();                                                                  //New Stage (neus Fenster)
-        File dir = dc.showDialog(dia);
+        File dir = dc.showDialog(null);
 
         if (dir != null) {                                                                                                  //Check if item is selected or selected item is not empty
             txtroot.setText(dir.getAbsolutePath());                                                                         //print selected path to TextBox
@@ -111,6 +111,7 @@ public class Controller {
                 WritableImage writable = SwingFXUtils.toFXImage(images.get(page), null);                       //create a writable image from buffered image, to write it to ImageView
                 pics.add(writable);                                                                                         //add writable image to new ArrayList "pics"
                 itemview.setImage(pics.get(index));                                                                         //set image to ImageView
+                pane.setContent(itemview);
                 System.out.println(images.size());                                                                          //print size of pics ArrayList (only checking)
             }
         }
@@ -153,5 +154,20 @@ public class Controller {
         }catch (Exception e){
 
         }
+    }
+    public void zoomIn() {                                                                                                 //Zoom PDF or picture (zooming not scaling)
+        itemview.setFitHeight(itemview.getFitHeight()*1.1);
+        itemview.setFitWidth(itemview.getFitWidth()*1.1);
+        pane.setPannable(true);
+    }
+    public void zoomOut() {
+        itemview.setFitHeight(itemview.getFitHeight() / 1.1);
+        itemview.setFitWidth(itemview.getFitWidth() / 1.1);
+        pane.setPannable(true);
+    }
+    public void reset(){
+        pane.setFitToHeight(true);
+        itemview.setFitHeight(600);
+        itemview.setFitWidth(615);
     }
 }
