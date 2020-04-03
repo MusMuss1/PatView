@@ -5,6 +5,7 @@ package sample;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -12,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.stage.DirectoryChooser;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.Label;
 
 import java.awt.*;
 import java.awt.image.WritableRaster;
@@ -40,7 +42,10 @@ public class Controller {
     private ImageView itemview;
     @FXML
     ScrollPane pane = new ScrollPane();
-
+    @FXML
+    Label lblpage = new Label();
+    @FXML
+    TextField txtpage = new TextField();
 
     private int index = 0;                                                                                                  //index type Integer saves PDF page number
     final ArrayList<Image> pics = new ArrayList<>();                                                                        //create ArrayList<Image> Type
@@ -109,6 +114,7 @@ public class Controller {
                 pics.add(writable);                                                                                         //add writable image to new ArrayList "pics"
                 itemview.setImage(pics.get(index));                                                                         //set image to ImageView
                 pane.setContent(itemview);
+                settxtpage();
                 System.out.println(images.size());                                                                          //print size of pics ArrayList (only checking)
             }
         }
@@ -136,6 +142,7 @@ public class Controller {
         }catch (Exception e){
 
         }
+        settxtpage();
     }
     //btnback click event
     public void goback(ActionEvent event){                                                                                  //"goback" mehtod handles btnback click event
@@ -151,6 +158,7 @@ public class Controller {
         }catch (Exception e){
 
         }
+        settxtpage();
     }
     public void zoomIn() {                                                                                                 //Zoom PDF or picture (zooming not scaling)
         itemview.setFitHeight(itemview.getFitHeight()*1.1);
@@ -166,5 +174,22 @@ public class Controller {
         pane.setFitToHeight(true);
         itemview.setFitHeight(600);
         itemview.setFitWidth(615);
+    }
+    public void settxtpage(){                                                                                               //set selected page to TextField (+1 because page index may not <= 0, there is no page "0")
+        txtpage.setText(String.valueOf(index+1));
+        lblpage.setText("/"+ String.valueOf(pics.size()));
+    }
+    public void changepage(ActionEvent chp) {                                                                              //set "txtpage" TextField to index
+        if(txtpage.getText().isEmpty()==false) {
+            index = Integer.parseInt(txtpage.getText()) - 1;
+            if (index >= 0 && index <= pics.size()) {
+                try {
+                    index = Integer.parseInt(txtpage.getText()) - 1;                                                       //set index to ArrayList for displaying right image in ImageView
+                    itemview.setImage(pics.get(index));
+                } catch (IllegalArgumentException e) {
+                    System.out.println(String.valueOf(index) + "Ist keine Seite.");
+                }
+            }
+        }
     }
 }
