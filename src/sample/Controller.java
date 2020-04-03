@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.awt.image.BufferedImage;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
@@ -47,6 +48,7 @@ public class Controller {
     @FXML
     TextField txtpage = new TextField();
 
+    private String path;
     private int index = 0;                                                                                                  //index type Integer saves PDF page number
     final ArrayList<Image> pics = new ArrayList<>();                                                                        //create ArrayList<Image> Type
 
@@ -82,7 +84,7 @@ public class Controller {
             pathBuilder.insert(0, item.getValue());
             pathBuilder.insert(0, "/");
         }
-        String path = pathBuilder.toString();
+        path = pathBuilder.toString();
         System.out.println(path);                                                                                           //write path to console (only checking)
         if (path.contains(".pdf")){                                                                                         //check if selected item is a PDF file
             createImagesFromPDF(path);
@@ -117,6 +119,7 @@ public class Controller {
                 settxtpage();
                 System.out.println(images.size());                                                                          //print size of pics ArrayList (only checking)
             }
+            is.close();                                                                                                     //important to close InputStream if we want to delete a selected file later
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -189,6 +192,26 @@ public class Controller {
                 } catch (IllegalArgumentException e) {
                     System.out.println(String.valueOf(index) + "Ist keine Seite.");
                 }
+            }
+        }
+    }
+
+    public void remove(){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Soll die Datei unwiderruflich gelöscht werden" + " ?", ButtonType.YES, ButtonType.NO);       //show dialog for user
+        alert.showAndWait();
+        if (alert.getResult() == ButtonType.YES) {
+            try {
+                Path delpath = Paths.get(path);                                                                            //path contains TreeView selected item
+                Files.delete(delpath);
+                TreeItem c = (TreeItem)view.getSelectionModel().getSelectedItem();                                         //after file removed we remove the TreeView selected item
+                c.getParent().getChildren().remove(c);
+            } catch (NoSuchFileException x) {
+                System.err.format("%s: no such" + " file or directory%n", path);
+            } catch (DirectoryNotEmptyException x) {
+                System.err.format("%s not empty%n", path);
+            } catch (IOException x) {
+                // File permission problems are caught here.
+                System.err.println(x);
             }
         }
     }

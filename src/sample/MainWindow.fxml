@@ -20,7 +20,7 @@
             <children>
                 <Button layoutX="126.0" layoutY="9.0" mnemonicParsing="false" onAction="#zoomIn" text="+" />
                 <Button layoutX="161.0" layoutY="9.0" mnemonicParsing="false" onAction="#zoomOut" text="-" />
-                <Button layoutY="9.0" mnemonicParsing="false" onAction="#reset" text="Button" />
+                <Button layoutY="9.0" mnemonicParsing="false" onAction="#remove" text="Delete" />
             </children>
         </Pane>
         <ScrollPane layoutX="625.0" layoutY="65.0" prefHeight="600.0" prefWidth="615.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="625.0" AnchorPane.rightAnchor="39.799999999999955" AnchorPane.topAnchor="65.0">
