@@ -44,6 +44,7 @@ public class Controller {
 
     private int index = 0;                                                                                                  //index type Integer saves PDF page number
     final ArrayList<Image> pics = new ArrayList<>();                                                                        //create ArrayList<Image> Type
+
     //btnpath click event
     public void getpath(ActionEvent event) {
         final DirectoryChooser dc = new DirectoryChooser();                                                                 //Create FileBrowser for Directory chose
@@ -52,18 +53,14 @@ public class Controller {
         if (dir != null) {                                                                                                  //Check if item is selected or selected item is not empty
             txtroot.setText(dir.getAbsolutePath());                                                                         //print selected path to TextBox
             //System.out.println(dir.getAbsolutePath());
-            String path = dir.getAbsolutePath();
-            File file = new File(path);
-            //File[] fileArray = file.listFiles();
-            //new Controller().getNodesForDirectory(new File(path));
             view.setRoot(getNodesForDirectory(dir));
         }
     }
 
-    public TreeItem<String> getNodesForDirectory(File path) {                                                               //Returns a TreeItem representation of the specified directory
-        TreeItem<String> root = new TreeItem<String>(path.getName());
-        for (File f : path.listFiles()) {
-            System.out.println("Loading " + f.getName());
+    public TreeItem<String> getNodesForDirectory(File dir) {                                                               //Returns a TreeItem representation of the specified directory
+        TreeItem<String> root = new TreeItem<String>(dir.getName());
+        for (File f : dir.listFiles()) {
+            System.out.println("Loading " + f.getName());                                                                   //write directories to console (only checking)
             if (f.isDirectory()) {                                                                                          //call the function recursively to put directories and files into TreeView
                 root.getChildren().add(getNodesForDirectory(f));
             } else {
