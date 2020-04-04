@@ -71,21 +71,16 @@ public class Controller {
             if (f.isDirectory()) {                                                                                          //call the function recursively to put directories and files into TreeView
                 root.getChildren().add(getNodesForDirectory(f));
             } else {
-                root.getChildren().add(new TreeItem<String>(f.getName()));
+                root.getChildren().add(new TreeItem<String>(f.getPath()));
             }
         }
         return root;
     }
     public String getitempath() {                                                                                           //get path from selected TreeView item and return path type string
-        StringBuilder pathBuilder = new StringBuilder();                                                                    //create StringBuilder to get the path from type string
-        for (TreeItem<String> item = view.getSelectionModel().getSelectedItem();
-             item != null; item = item.getParent()) {                                                                       // selected item may not be empty
-
-            pathBuilder.insert(0, item.getValue());
-            pathBuilder.insert(0, "/");
-        }
-        path = pathBuilder.toString();
+         TreeItem<String> item = view.getSelectionModel().getSelectedItem();
+        path = item.getValue();
         System.out.println(path);                                                                                           //write path to console (only checking)
+
         if (path.contains(".pdf")){                                                                                         //check if selected item is a PDF file
             createImagesFromPDF(path);
         }
@@ -205,6 +200,7 @@ public class Controller {
                 Files.delete(delpath);
                 TreeItem c = (TreeItem)view.getSelectionModel().getSelectedItem();                                         //after file removed we remove the TreeView selected item
                 c.getParent().getChildren().remove(c);
+                itemview.setImage(null);                                                                                   //clear ImageView
             } catch (NoSuchFileException x) {
                 System.err.format("%s: no such" + " file or directory%n", path);
             } catch (DirectoryNotEmptyException x) {
