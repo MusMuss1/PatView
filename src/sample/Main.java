@@ -13,10 +13,14 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("MainWindow.fxml"));
         primaryStage.setTitle("PatView");
-        primaryStage.setScene(new Scene(root, 1280, 720));
+        //primaryStage.setScene(new Scene(root, 1280, 720));
+        primaryStage.setScene(new Scene(root));
+        primaryStage.sizeToScene();
 
 
         primaryStage.show();
+        primaryStage.setMinHeight(primaryStage.getHeight());
+        primaryStage.setMinWidth(primaryStage.getWidth());
     }
 
 

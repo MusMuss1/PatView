@@ -187,6 +187,10 @@ public class Controller {
                 } catch (IllegalArgumentException e) {
                     System.out.println(String.valueOf(index) + "Ist keine Seite.");
                 }
+            }else {
+                Alert del = new Alert(Alert.AlertType.CONFIRMATION, "Die angeforderte Seite exsistiert nicht .", ButtonType.OK);
+                del.show();
+                txtpage.setText(String.valueOf(1));
             }
         }
     }
