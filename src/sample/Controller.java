@@ -49,6 +49,7 @@ public class Controller {
     TextField txtpage = new TextField();
 
     private String path;
+    private String dirpath;
     private int index = 0;                                                                                                  //index type Integer saves PDF page number
     final ArrayList<Image> pics = new ArrayList<>();                                                                        //create ArrayList<Image> Type
 
@@ -58,29 +59,36 @@ public class Controller {
         File dir = dc.showDialog(null);
 
         if (dir != null) {                                                                                                  //Check if item is selected or selected item is not empty
-            txtroot.setText(dir.getAbsolutePath());                                                                         //print selected path to TextBox
+            dirpath = dir.getAbsolutePath();
+            txtroot.setText(dirpath);                                                                                       //print selected path to TextBox
             //System.out.println(dir.getAbsolutePath());
             view.setRoot(getNodesForDirectory(dir));
         }
     }
 
-    public TreeItem<String> getNodesForDirectory(File dir) {                                                               //Returns a TreeItem representation of the specified directory
+    public TreeItem<String> getNodesForDirectory(File dir) {                                                                //Returns a TreeItem representation of the specified directory
         TreeItem<String> root = new TreeItem<String>(dir.getName());
         for (File f : dir.listFiles()) {
             System.out.println("Loading " + f.getName());                                                                   //write directories to console (only checking)
             if (f.isDirectory()) {                                                                                          //call the function recursively to put directories and files into TreeView
                 root.getChildren().add(getNodesForDirectory(f));
             } else {
-                root.getChildren().add(new TreeItem<String>(f.getPath()));
+                root.getChildren().add(new TreeItem<String>(f.getName()));
             }
         }
         return root;
     }
     public String getitempath() {                                                                                           //get path from selected TreeView item and return path type string
-         TreeItem<String> item = view.getSelectionModel().getSelectedItem();
-        path = item.getValue();
-        System.out.println(path);                                                                                           //write path to console (only checking)
+        StringBuilder pathBuilder = new StringBuilder();                                                                    //create StringBuilder to get the path from type string
+        for (TreeItem<String> item = view.getSelectionModel().getSelectedItem();                                            //get ItemValue for every TreeItem
+             item != null; item = item.getParent()) {                                                                       //selected item may not be empty
 
+            pathBuilder.insert(0, item.getValue());                                                                   //building path
+            pathBuilder.insert(0, "\\");
+        }
+        path = dirpath;                                                                                                      //set path = root directory -> first part of AbsolutePath
+        path = path.replace("\\"+view.getRoot().getValue(),"")+pathBuilder.toString();                      //delete TreeRootItem cause it already exists in dirpath
+        System.out.println("Selected Document: "+path);                                                                     //write path to console (only checking)
         if (path.contains(".pdf")){                                                                                         //check if selected item is a PDF file
             createImagesFromPDF(path);
         }
@@ -107,7 +115,7 @@ public class Controller {
             for (int page = 0; page < pdf.getNumberOfPages(); ++page) {                                                     //Create PDF Renderer (PDFBox) and render all PDF Pages to BufferedImages
                 BufferedImage img = pdfRenderer.renderImageWithDPI(page, 300, ImageType.RGB);
                 images.add(img);                                                                                            //add buffered to the created array list
-                WritableImage writable = SwingFXUtils.toFXImage(images.get(page), null);                       //create a writable image from buffered image, to write it to ImageView
+                WritableImage writable = SwingFXUtils.toFXImage(images.get(page), null);                        //create a writable image from buffered image, to write it to ImageView
                 pics.add(writable);                                                                                         //add writable image to new ArrayList "pics"
                 itemview.setImage(pics.get(index));                                                                         //set image to ImageView
                 pane.setContent(itemview);
@@ -164,14 +172,14 @@ public class Controller {
         pane.setPannable(true);
     }
     public void zoomOut() {
-        itemview.setFitHeight(itemview.getFitHeight() / 1.1);
-        itemview.setFitWidth(itemview.getFitWidth() / 1.1);
+        itemview.setFitHeight(itemview.getFitHeight()/1.1);
+        itemview.setFitWidth(itemview.getFitWidth()/1.1);
         pane.setPannable(true);
     }
     public void reset(){
         pane.setFitToHeight(true);
-        itemview.setFitHeight(600);
-        itemview.setFitWidth(615);
+        itemview.setFitHeight(545);
+        itemview.setFitWidth(608);
     }
     public void settxtpage(){                                                                                               //set selected page to TextField (+1 because page index may not <= 0, there is no page "0")
         txtpage.setText(String.valueOf(index+1));
@@ -180,7 +188,7 @@ public class Controller {
     public void changepage(ActionEvent chp) {                                                                              //set "txtpage" TextField to index
         if(txtpage.getText().isEmpty()==false) {
             index = Integer.parseInt(txtpage.getText()) - 1;
-            if (index >= 0 && index <= pics.size()) {
+            if (index >= 0 && index <= pics.size()-1) {                                                                    //-1 because Array is from 0-x
                 try {
                     index = Integer.parseInt(txtpage.getText()) - 1;                                                       //set index to ArrayList for displaying right image in ImageView
                     itemview.setImage(pics.get(index));
