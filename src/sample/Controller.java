@@ -3,6 +3,7 @@ package sample;
 // https://github.com/MusMuss1/PatView
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
@@ -11,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.ScrollEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.Label;
@@ -118,7 +120,6 @@ public class Controller {
                 WritableImage writable = SwingFXUtils.toFXImage(images.get(page), null);                        //create a writable image from buffered image, to write it to ImageView
                 pics.add(writable);                                                                                         //add writable image to new ArrayList "pics"
                 itemview.setImage(pics.get(index));                                                                         //set image to ImageView
-                pane.setContent(itemview);
                 settxtpage();
                 System.out.println(images.size());                                                                          //print size of pics ArrayList (only checking)
             }
@@ -176,6 +177,26 @@ public class Controller {
         itemview.setFitWidth(itemview.getFitWidth()/1.1);
         pane.setPannable(true);
     }
+
+    public void zoom() {                                                                                                  //ZoomScrollEvent
+        itemview.setOnScroll(
+                new EventHandler<ScrollEvent>() {
+                    @Override
+                    public void handle(ScrollEvent event) {
+                        double zoomFactor = 1.1;                                                                         //define zoomfaktor
+                        double deltaY = event.getDeltaY();                                                               //get Scrollingvalue as double for up and down
+
+                        if (deltaY < 0){                                                                                 //if < 0 = scrolling down -> negative zoomfactor to zoom out
+                            zoomFactor = 0.9;
+                        }                                                                                                //same like zoomIn
+                        itemview.setFitHeight(itemview.getFitHeight()*zoomFactor);
+                        itemview.setFitWidth(itemview.getFitWidth()*zoomFactor);
+                        event.consume();
+                    }
+                });
+
+    }
+
     public void reset(){
         pane.setFitToHeight(true);
         itemview.setFitHeight(545);
@@ -196,7 +217,7 @@ public class Controller {
                     System.out.println(String.valueOf(index) + "Ist keine Seite.");
                 }
             }else {
-                Alert del = new Alert(Alert.AlertType.CONFIRMATION, "Die angeforderte Seite exsistiert nicht .", ButtonType.OK);
+                Alert del = new Alert(Alert.AlertType.WARNING, "Die angeforderte Seite exsistiert nicht .", ButtonType.OK);
                 del.show();
                 txtpage.setText(String.valueOf(1));
             }
