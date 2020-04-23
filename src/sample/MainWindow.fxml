@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane fx:id="dialog" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <children>
@@ -16,7 +17,7 @@
                     </items>
                 </ContextMenu>
             </contextMenu></TreeView>
-        <Pane fx:id="control2" visible="false" layoutX="1025.0" layoutY="664.0" prefHeight="42.0" prefWidth="214.0" AnchorPane.bottomAnchor="13.600000000000023" AnchorPane.rightAnchor="40.59999999999991">
+        <Pane fx:id="control2" layoutX="1025.0" layoutY="664.0" prefHeight="42.0" prefWidth="214.0" visible="false" AnchorPane.bottomAnchor="13.600000000000023" AnchorPane.rightAnchor="40.59999999999991">
             <children>
                 <Button fx:id="btnback" layoutX="141.0" layoutY="9.0" mnemonicParsing="false" onAction="#goback" text="&lt;&lt;" />
                 <Button fx:id="btnforward" layoutX="184.0" layoutY="9.0" mnemonicParsing="false" onAction="#goforward" text="&gt;&gt;" />
@@ -40,6 +41,9 @@
             </StackPane>
          </content>
         </ScrollPane>
-      <Label fx:id="lblinfo" layoutX="626.0" layoutY="50.0" text="Patient:" />
+      <Label fx:id="lblinfo" layoutX="626.0" layoutY="50.0" text="Patient:">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font></Label>
     </children>
 </AnchorPane>

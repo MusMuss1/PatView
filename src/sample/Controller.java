@@ -117,13 +117,13 @@ public class Controller implements Initializable {
     public String getitempath() {                                                                                           //get path from selected TreeView item and return path type string
         StringBuilder pathBuilder = new StringBuilder();                                                                    //create StringBuilder to get the path from type string
         for (TreeItem<String> item = view.getSelectionModel().getSelectedItem();                                            //get ItemValue for every TreeItem
-             item != null; item = item.getParent()) {                                                                       //selected item may not be empty
+             item != null&&item !=view.getRoot(); item = item.getParent()) {                                                //selected item may not be empty and not RootItem to avoid double root in path
 
             pathBuilder.insert(0, item.getValue());                                                                   //building path
             pathBuilder.insert(0, "\\");
         }
-        path = dirpath;                                                                                                      //set path = root directory -> first part of AbsolutePath
-        path = path.replace("\\"+view.getRoot().getValue(),"")+pathBuilder.toString();                      //delete TreeRootItem cause it already exists in dirpath
+
+        path = dirpath + pathBuilder.toString();                                                                              //merge dirpath and nodes from TreeView
         System.out.println("Selected Document: "+path);                                                                     //write path to console (only checking)
         lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getValue());                                 //show Patient ID
 
