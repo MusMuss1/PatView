@@ -16,7 +16,7 @@
                     </items>
                 </ContextMenu>
             </contextMenu></TreeView>
-        <Pane fx:id="control2" layoutX="1025.0" layoutY="664.0" prefHeight="42.0" prefWidth="214.0" AnchorPane.bottomAnchor="13.600000000000023" AnchorPane.rightAnchor="40.59999999999991">
+        <Pane fx:id="control2" visible="false" layoutX="1025.0" layoutY="664.0" prefHeight="42.0" prefWidth="214.0" AnchorPane.bottomAnchor="13.600000000000023" AnchorPane.rightAnchor="40.59999999999991">
             <children>
                 <Button fx:id="btnback" layoutX="141.0" layoutY="9.0" mnemonicParsing="false" onAction="#goback" text="&lt;&lt;" />
                 <Button fx:id="btnforward" layoutX="184.0" layoutY="9.0" mnemonicParsing="false" onAction="#goforward" text="&gt;&gt;" />
@@ -31,7 +31,7 @@
             <Button layoutX="78.0" layoutY="9.0" mnemonicParsing="false" onAction="#reset" text="Reset" />
             </children>
         </Pane>
-        <ScrollPane fx:id="pane" fitToWidth="true" layoutX="625.0" layoutY="65.0" pannable="true" prefHeight="600.0" prefWidth="615.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="625.0" AnchorPane.rightAnchor="39.799999999999955" AnchorPane.topAnchor="65.0">
+        <ScrollPane fx:id="pane" fitToHeight="true" fitToWidth="true" layoutX="625.0" layoutY="65.0" pannable="true" prefHeight="600.0" prefWidth="615.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="625.0" AnchorPane.rightAnchor="39.799999999999955" AnchorPane.topAnchor="65.0">
          <content>
             <StackPane prefHeight="150.0" prefWidth="200.0">
                <children>
@@ -40,5 +40,6 @@
             </StackPane>
          </content>
         </ScrollPane>
+      <Label fx:id="lblinfo" layoutX="626.0" layoutY="50.0" text="Patient:" />
     </children>
 </AnchorPane>

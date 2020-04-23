@@ -2,9 +2,12 @@ package sample;
 
 // https://github.com/MusMuss1/PatView
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -13,9 +16,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.scene.control.TreeView;
-import javafx.scene.control.Label;
 
 import java.awt.*;
 import java.awt.image.WritableRaster;
@@ -25,9 +28,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
+
 import javafx.embed.swing.SwingFXUtils;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -36,7 +42,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 
 import javax.swing.*;
 
-public class Controller {
+public class Controller implements Initializable {
     @FXML
     private TextField txtroot;
     @FXML
@@ -46,9 +52,36 @@ public class Controller {
     @FXML
     ScrollPane pane = new ScrollPane();
     @FXML
+    Pane control2 = new Pane();
+    @FXML
     Label lblpage = new Label();
     @FXML
+    Label lblinfo = new Label();
+    @FXML
     TextField txtpage = new TextField();
+
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {                                                        //initialize and set size of ImageView to ScrollPane size
+
+        if (pane != null) {
+            pane.widthProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+                    itemview.setFitHeight(pane.getHeight());
+                    itemview.setFitWidth(pane.getWidth());
+                }
+            });
+            pane.heightProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+                    itemview.setFitHeight(pane.getHeight());
+                    itemview.setFitWidth(pane.getWidth());
+                }
+            });
+        }
+    }
+
 
     private String path;
     private String dirpath;
@@ -56,7 +89,7 @@ public class Controller {
     final ArrayList<Image> pics = new ArrayList<>();                                                                        //create ArrayList<Image> Type
 
     //btnpath click event
-    public void getpath(ActionEvent event) {
+    public void getpath(ActionEvent gp) {
         final DirectoryChooser dc = new DirectoryChooser();                                                                 //Create FileBrowser for Directory chose
         File dir = dc.showDialog(null);
 
@@ -80,6 +113,7 @@ public class Controller {
         }
         return root;
     }
+
     public String getitempath() {                                                                                           //get path from selected TreeView item and return path type string
         StringBuilder pathBuilder = new StringBuilder();                                                                    //create StringBuilder to get the path from type string
         for (TreeItem<String> item = view.getSelectionModel().getSelectedItem();                                            //get ItemValue for every TreeItem
@@ -91,11 +125,17 @@ public class Controller {
         path = dirpath;                                                                                                      //set path = root directory -> first part of AbsolutePath
         path = path.replace("\\"+view.getRoot().getValue(),"")+pathBuilder.toString();                      //delete TreeRootItem cause it already exists in dirpath
         System.out.println("Selected Document: "+path);                                                                     //write path to console (only checking)
-        if (path.contains(".pdf")){                                                                                         //check if selected item is a PDF file
+        lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getValue());                                 //show Patient ID
+
+        if (path.endsWith(".pdf")){                                                                                         //check if selected item is a PDF file
             createImagesFromPDF(path);
+            control2.setVisible(true);
+            lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue());
         }
-        else{                                                                                                               //if pdf = false call getimage() method
+        else if(path.endsWith(".png")|path.endsWith(".jpg")){                                                               //if pdf = false and it's an Image call getimage() method
             getimage(path);
+            control2.setVisible(false);                                                                                     //displaying page is not need for images
+            lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue());
         }
         return path;
     }
@@ -136,8 +176,9 @@ public class Controller {
         }
         return images;
     }
+
     //brnforward click event
-    public void goforward(ActionEvent event){                                                                               //"goforwad" method handles btnforward click event
+    public void goforward(ActionEvent gf){                                                                                 //"goforwad" method handles btnforward click event
         try{
             if(index<pics.size()-1){
                 index++;
@@ -151,8 +192,9 @@ public class Controller {
         }
         settxtpage();
     }
+
     //btnback click event
-    public void goback(ActionEvent event){                                                                                  //"goback" mehtod handles btnback click event
+    public void goback(ActionEvent gb){                                                                                    //"goback" mehtod handles btnback click event
         try{
             if(index>0){
                 index--;
@@ -172,6 +214,7 @@ public class Controller {
         itemview.setFitWidth(itemview.getFitWidth()*1.1);
         pane.setPannable(true);
     }
+
     public void zoomOut() {
         itemview.setFitHeight(itemview.getFitHeight()/1.1);
         itemview.setFitWidth(itemview.getFitWidth()/1.1);
@@ -202,10 +245,12 @@ public class Controller {
         itemview.setFitHeight(545);
         itemview.setFitWidth(608);
     }
+
     public void settxtpage(){                                                                                               //set selected page to TextField (+1 because page index may not <= 0, there is no page "0")
         txtpage.setText(String.valueOf(index+1));
         lblpage.setText("/"+ String.valueOf(pics.size()));
     }
+
     public void changepage(ActionEvent chp) {                                                                              //set "txtpage" TextField to index
         if(txtpage.getText().isEmpty()==false) {
             index = Integer.parseInt(txtpage.getText()) - 1;
@@ -224,7 +269,7 @@ public class Controller {
         }
     }
 
-    public void remove(){
+    public void remove(ActionEvent rm){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Soll die Datei unwiderruflich gelöscht werden" + " ?", ButtonType.YES, ButtonType.NO);       //show dialog for user
         alert.showAndWait();
         if (alert.getResult() == ButtonType.YES) {
