@@ -36,7 +36,7 @@
          <content>
             <StackPane prefHeight="150.0" prefWidth="200.0">
                <children>
-                      <ImageView fx:id="itemview" fitHeight="545.0" fitWidth="608.0" onScroll="#zoom" pickOnBounds="true" preserveRatio="true" />
+                      <ImageView fx:id="itemview" fitHeight="545.0" fitWidth="608.0" onScroll="#ScrollZoom" pickOnBounds="true" preserveRatio="true" />
                </children>
             </StackPane>
          </content>

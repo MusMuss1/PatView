@@ -115,33 +115,43 @@ public class Controller implements Initializable {
     }
 
     public String getitempath() {                                                                                           //get path from selected TreeView item and return path type string
-        StringBuilder pathBuilder = new StringBuilder();                                                                    //create StringBuilder to get the path from type string
-        for (TreeItem<String> item = view.getSelectionModel().getSelectedItem();                                            //get ItemValue for every TreeItem
-             item != null&&item !=view.getRoot(); item = item.getParent()) {                                                //selected item may not be empty and not RootItem to avoid double root in path
+        if (view.getSelectionModel().getSelectedItem() != null){                                                            //check if user has selected a TreeItem to avoid exception
 
-            pathBuilder.insert(0, item.getValue());                                                                   //building path
-            pathBuilder.insert(0, "\\");
-        }
+            StringBuilder pathBuilder = new StringBuilder();                                                                //create StringBuilder to get the path from type string
+            for (TreeItem<String> item = view.getSelectionModel().getSelectedItem();                                        //get ItemValue for every TreeItem
+                 item != null&&item !=view.getRoot(); item = item.getParent()) {                                            //selected item may not be empty and not RootItem to avoid double root in path
 
-        path = dirpath + pathBuilder.toString();                                                                              //merge dirpath and nodes from TreeView
-        System.out.println("Selected Document: "+path);                                                                     //write path to console (only checking)
-        lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getValue());                                 //show Patient ID
+                pathBuilder.insert(0, item.getValue());                                                               //building path
+                pathBuilder.insert(0, "\\");
+            }
 
-        if (path.endsWith(".pdf")){                                                                                         //check if selected item is a PDF file
-            createImagesFromPDF(path);
-            control2.setVisible(true);
-            lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue());
-        }
-        else if(path.endsWith(".png")|path.endsWith(".jpg")){                                                               //if pdf = false and it's an Image call getimage() method
-            getimage(path);
-            control2.setVisible(false);                                                                                     //displaying page is not need for images
-            lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue());
+            path = dirpath + pathBuilder.toString();                                                                        //merge dirpath and nodes from TreeView
+            System.out.println("Selected Document: "+path);                                                                 //write path to console (only checking)
+            lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getValue());                             //show Patient ID
+
+            if (path.endsWith(".pdf")){                                                                                     //check if selected item is a PDF file
+                reset();                                                                                                    //reset imagezoom
+                createImagesFromPDF(path);
+                control2.setVisible(true);
+                lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue());
+            }
+            else if(path.endsWith(".png")|path.endsWith(".jpg")){                                                           //if pdf = false and it's an Image call getimage() method
+                reset();
+                getimage(path);
+                control2.setVisible(false);                                                                                 //displaying page is not need for images
+                lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue());
+            }else{
+                itemview.setImage(null);
+            }
         }
         return path;
     }
     public void getimage(String path){                                                                                      //create image from TreeView selected item
-        Image I = new Image("file:"+path);
-        itemview.setImage(I);
+        File picture = new File(path);
+        if(picture.isFile()){                                                                                               //check if the requested file exists
+            Image I = new Image(picture.toURI().toString());                                                                //set selected file to ImageView
+            itemview.setImage(I);
+        }
     }
 
     private List<BufferedImage> createImagesFromPDF(String path){                                                           //convert PDF File to an Image using PDFBox | receives the path of type string
@@ -212,38 +222,28 @@ public class Controller implements Initializable {
     public void zoomIn() {                                                                                                 //Zoom PDF or picture (zooming not scaling)
         itemview.setFitHeight(itemview.getFitHeight()*1.1);
         itemview.setFitWidth(itemview.getFitWidth()*1.1);
-        pane.setPannable(true);
     }
 
     public void zoomOut() {
         itemview.setFitHeight(itemview.getFitHeight()/1.1);
         itemview.setFitWidth(itemview.getFitWidth()/1.1);
-        pane.setPannable(true);
     }
 
-    public void zoom() {                                                                                                  //ZoomScrollEvent
-        itemview.setOnScroll(
-                new EventHandler<ScrollEvent>() {
-                    @Override
-                    public void handle(ScrollEvent event) {
-                        double zoomFactor = 1.1;                                                                         //define zoomfaktor
-                        double deltaY = event.getDeltaY();                                                               //get Scrollingvalue as double for up and down
+    public void ScrollZoom(ScrollEvent event) {                                                                                   //ZoomScrollEvent
+        double zoomFactor = 1.1;                                                                                            //define zoomfaktor
+        double deltaY = event.getDeltaY();                                                                                  //get Scrollingvalue as double for up and down
 
-                        if (deltaY < 0){                                                                                 //if < 0 = scrolling down -> negative zoomfactor to zoom out
-                            zoomFactor = 0.9;
-                        }                                                                                                //same like zoomIn
-                        itemview.setFitHeight(itemview.getFitHeight()*zoomFactor);
-                        itemview.setFitWidth(itemview.getFitWidth()*zoomFactor);
-                        event.consume();
-                    }
-                });
-
+        if (deltaY < 0){                                                                                                    //if < 0 = scrolling down -> negative zoomfactor to zoom out
+            zoomFactor = 0.9;
+        }                                                                                                                   //same like zoomIn
+        itemview.setFitHeight(itemview.getFitHeight()*zoomFactor);
+        itemview.setFitWidth(itemview.getFitWidth()*zoomFactor);
+        event.consume();
     }
 
     public void reset(){
-        pane.setFitToHeight(true);
-        itemview.setFitHeight(545);
-        itemview.setFitWidth(608);
+        itemview.setFitHeight(pane.getHeight());
+        itemview.setFitWidth(pane.getWidth());
     }
 
     public void settxtpage(){                                                                                               //set selected page to TextField (+1 because page index may not <= 0, there is no page "0")
