@@ -122,7 +122,7 @@ public class Controller implements Initializable {
                  item != null&&item !=view.getRoot(); item = item.getParent()) {                                            //selected item may not be empty and not RootItem to avoid double root in path
 
                 pathBuilder.insert(0, item.getValue());                                                               //building path
-                pathBuilder.insert(0, "\\");
+                pathBuilder.insert(0, File.separator);
             }
 
             path = dirpath + pathBuilder.toString();                                                                        //merge dirpath and nodes from TreeView
@@ -141,6 +141,7 @@ public class Controller implements Initializable {
                 control2.setVisible(false);                                                                                 //displaying page is not need for images
                 lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue());
             }else{
+                reset();
                 itemview.setImage(null);
             }
         }

@@ -34,9 +34,9 @@
         </Pane>
         <ScrollPane fx:id="pane" fitToHeight="true" fitToWidth="true" layoutX="625.0" layoutY="65.0" pannable="true" prefHeight="600.0" prefWidth="615.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="625.0" AnchorPane.rightAnchor="39.799999999999955" AnchorPane.topAnchor="65.0">
          <content>
-            <StackPane prefHeight="150.0" prefWidth="200.0">
+            <StackPane onScroll="#ScrollZoom" prefHeight="150.0" prefWidth="200.0">
                <children>
-                      <ImageView fx:id="itemview" fitHeight="545.0" fitWidth="608.0" onScroll="#ScrollZoom" pickOnBounds="true" preserveRatio="true" />
+                      <ImageView fx:id="itemview" fitHeight="545.0" fitWidth="608.0" pickOnBounds="true" preserveRatio="true" />
                </children>
             </StackPane>
          </content>
