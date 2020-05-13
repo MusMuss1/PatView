@@ -54,6 +54,8 @@ public class Controller implements Initializable {
     @FXML
     Pane control2 = new Pane();
     @FXML
+    Pane control1 = new Pane();
+    @FXML
     Label lblpage = new Label();
     @FXML
     Label lblinfo = new Label();
@@ -132,17 +134,21 @@ public class Controller implements Initializable {
             if (path.endsWith(".pdf")){                                                                                     //check if selected item is a PDF file
                 reset();                                                                                                    //reset imagezoom
                 createImagesFromPDF(path);
+                control1.setVisible(true);
                 control2.setVisible(true);
                 lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue());
             }
             else if(path.endsWith(".png")|path.endsWith(".jpg")){                                                           //if pdf = false and it's an Image call getimage() method
                 reset();
                 getimage(path);
+                control1.setVisible(true);
                 control2.setVisible(false);                                                                                 //displaying page is not need for images
                 lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue());
             }else{
                 reset();
                 itemview.setImage(null);
+                control1.setVisible(false);
+                control2.setVisible(false);
             }
         }
         return path;
@@ -193,11 +199,10 @@ public class Controller implements Initializable {
         try{
             if(index<pics.size()-1){
                 index++;
-                itemview.setImage(pics.get(index));
             }else{
                 index = 0;
-                itemview.setImage(pics.get(index));
             }
+            itemview.setImage(pics.get(index));
         }catch (Exception e){
 
         }
@@ -209,17 +214,28 @@ public class Controller implements Initializable {
         try{
             if(index>0){
                 index--;
-                itemview.setImage(pics.get(index));
             }else{
                 index=pics.size();
                 index--;
-                itemview.setImage(pics.get(index));
             }
+            itemview.setImage(pics.get(index));
         }catch (Exception e){
 
         }
         settxtpage();
     }
+
+    public void golast(){
+        index = pics.size()-1;
+        itemview.setImage(pics.get(index));
+        settxtpage();
+    }
+    public void gofirst(){
+        index = 0;
+        itemview.setImage(pics.get(index));
+        settxtpage();
+    }
+
     public void zoomIn() {                                                                                                 //Zoom PDF or picture (zooming not scaling)
         itemview.setFitHeight(itemview.getFitHeight()*1.1);
         itemview.setFitWidth(itemview.getFitWidth()*1.1);
@@ -249,7 +265,7 @@ public class Controller implements Initializable {
 
     public void settxtpage(){                                                                                               //set selected page to TextField (+1 because page index may not <= 0, there is no page "0")
         txtpage.setText(String.valueOf(index+1));
-        lblpage.setText("/"+ String.valueOf(pics.size()));
+        lblpage.setText("/ "+ String.valueOf(pics.size()));
     }
 
     public void changepage(ActionEvent chp) {                                                                              //set "txtpage" TextField to index

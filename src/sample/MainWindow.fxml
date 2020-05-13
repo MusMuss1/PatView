@@ -17,18 +17,20 @@
                     </items>
                 </ContextMenu>
             </contextMenu></TreeView>
-        <Pane fx:id="control2" layoutX="1025.0" layoutY="664.0" prefHeight="42.0" prefWidth="214.0" visible="false" AnchorPane.bottomAnchor="13.600000000000023" AnchorPane.rightAnchor="40.59999999999991">
+        <Pane fx:id="control2" layoutX="1025.0" layoutY="664.0" prefHeight="42.0" prefWidth="248.0" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="41.0">
             <children>
-                <Button fx:id="btnback" layoutX="141.0" layoutY="9.0" mnemonicParsing="false" onAction="#goback" text="&lt;&lt;" />
-                <Button fx:id="btnforward" layoutX="184.0" layoutY="9.0" mnemonicParsing="false" onAction="#goforward" text="&gt;&gt;" />
-                <Label fx:id="lblpage" layoutX="115.0" layoutY="13.0" text="/10" />
-                <TextField fx:id="txtpage" layoutX="75.0" layoutY="9.0" onAction="#changepage" prefHeight="26.0" prefWidth="32.0" />
+                <Button fx:id="btnback" layoutX="65.0" layoutY="10.0" mnemonicParsing="false" onAction="#goback" text="&lt;&lt;" />
+                <Button fx:id="btnforward" layoutX="178.0" layoutY="10.0" mnemonicParsing="false" onAction="#goforward" text="&gt;&gt;" />
+                <Label fx:id="lblpage" layoutX="148.0" layoutY="14.0" text="/ 10" />
+                <TextField fx:id="txtpage" layoutX="108.0" layoutY="10.0" onAction="#changepage" prefHeight="26.0" prefWidth="32.0" />
+            <Button fx:id="betnlast" layoutX="220.0" layoutY="10.0" mnemonicParsing="false" onAction="#golast" text="&gt;|" />
+            <Button fx:id="btnfirst" layoutX="27.0" layoutY="10.0" mnemonicParsing="false" onAction="#gofirst" text="|&lt;" />
             </children></Pane>
-        <Pane fx:id="control1" layoutX="625.0" layoutY="665.0" prefHeight="42.0" prefWidth="200.0" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="625.0" AnchorPane.rightAnchor="455.0">
+        <Pane fx:id="control1" layoutX="625.0" layoutY="665.0" prefHeight="42.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="625.0" AnchorPane.rightAnchor="455.0">
             <children>
                 <Button layoutX="126.0" layoutY="9.0" mnemonicParsing="false" onAction="#zoomIn" text="+" />
                 <Button layoutX="161.0" layoutY="9.0" mnemonicParsing="false" onAction="#zoomOut" text="-" />
-                <Button layoutY="9.0" mnemonicParsing="false" onAction="#remove" text="Delete" />
+                <Button layoutY="9.0" mnemonicParsing="false" onAction="#remove" text="Löschen" />
             <Button layoutX="78.0" layoutY="9.0" mnemonicParsing="false" onAction="#reset" text="Reset" />
             </children>
         </Pane>
