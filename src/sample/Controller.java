@@ -90,6 +90,12 @@ public class Controller implements Initializable {
     private int index = 0;                                                                                                  //index type Integer saves PDF page number
     final ArrayList<Image> pics = new ArrayList<>();                                                                        //create ArrayList<Image> Type
 
+    //get src
+    Image rootIcon = new Image("root.png");
+    Image Image = new Image("image.png");
+    Image PDF = new Image("pdf.png");
+
+
     //btnpath click event
     public void getpath(ActionEvent gp) {
         final DirectoryChooser dc = new DirectoryChooser();                                                                 //Create FileBrowser for Directory chose
@@ -104,13 +110,15 @@ public class Controller implements Initializable {
     }
 
     public TreeItem<String> getNodesForDirectory(File dir) {                                                                //Returns a TreeItem representation of the specified directory
-        TreeItem<String> root = new TreeItem<String>(dir.getName());
+        TreeItem<String> root = new TreeItem<String>(dir.getName(),new ImageView(rootIcon));
         for (File f : dir.listFiles()) {
             System.out.println("Loading " + f.getName());                                                                   //write directories to console (only checking)
             if (f.isDirectory()) {                                                                                          //call the function recursively to put directories and files into TreeView
                 root.getChildren().add(getNodesForDirectory(f));
-            } else {
-                root.getChildren().add(new TreeItem<String>(f.getName()));
+            } else if (f.getName().endsWith(".pdf")) {
+                root.getChildren().add(new TreeItem<String>(f.getName(), new ImageView(PDF)));
+            }else{
+                root.getChildren().add(new TreeItem<String>(f.getName(), new ImageView(Image)));
             }
         }
         return root;
@@ -136,6 +144,14 @@ public class Controller implements Initializable {
                 createImagesFromPDF(path);
                 control1.setVisible(true);
                 control2.setVisible(true);
+
+                if (pics.size()<=1) {
+                    control2.setDisable(true);
+                }
+                else {
+                    control2.setDisable(false);
+                }
+
                 lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue());
             }
             else if(path.endsWith(".png")|path.endsWith(".jpg")){                                                           //if pdf = false and it's an Image call getimage() method
@@ -149,10 +165,18 @@ public class Controller implements Initializable {
                 itemview.setImage(null);
                 control1.setVisible(false);
                 control2.setVisible(false);
+
+                File f =new File(path);
+                if (f.isFile()){
+                    Alert del = new Alert(Alert.AlertType.WARNING, "Dieses Dateiformat wird nicht unterstützt.", ButtonType.OK);
+                    del.show();
+                    txtpage.setText(String.valueOf(1));
+                }
             }
         }
         return path;
     }
+
     public void getimage(String path){                                                                                      //create image from TreeView selected item
         File picture = new File(path);
         if(picture.isFile()){                                                                                               //check if the requested file exists
