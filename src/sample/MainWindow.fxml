@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="dialog" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<AnchorPane fx:id="dialog" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <children>
         <Button fx:id="btnpath" layoutX="551.0" layoutY="32.0" mnemonicParsing="false" onAction="#getpath" prefHeight="26.0" prefWidth="46.0" text="..." />
         <TextField fx:id="txtroot" layoutX="28.0" layoutY="32.0" prefHeight="26.0" prefWidth="514.0" promptText="Verzeichnis wählen" />
@@ -13,39 +13,43 @@
             <contextMenu>
                 <ContextMenu id="cmenu">
                     <items>
-                        <MenuItem fx:id="mdel" mnemonicParsing="false" onAction="#remove" text="Löschen" />
+                        <MenuItem fx:id="mdel" mnemonicParsing="false" onAction="#remove" styleClass="iconOpen" text="Löschen" />
                     </items>
                 </ContextMenu>
             </contextMenu></TreeView>
         <Pane fx:id="control2" layoutX="1025.0" layoutY="664.0" prefHeight="42.0" prefWidth="248.0" visible="false" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="41.0">
             <children>
-                <Button fx:id="btnback" layoutX="65.0" layoutY="10.0" mnemonicParsing="false" onAction="#goback" text="&lt;&lt;" />
+                <Button fx:id="btnback" layoutX="60.0" layoutY="10.0" mnemonicParsing="false" onAction="#goback" text="&lt;&lt;" />
                 <Button fx:id="btnforward" layoutX="178.0" layoutY="10.0" mnemonicParsing="false" onAction="#goforward" text="&gt;&gt;" />
                 <Label fx:id="lblpage" layoutX="148.0" layoutY="14.0" text="/ 10" />
-                <TextField fx:id="txtpage" layoutX="108.0" layoutY="10.0" onAction="#changepage" prefHeight="26.0" prefWidth="32.0" />
-            <Button fx:id="betnlast" layoutX="220.0" layoutY="10.0" mnemonicParsing="false" onAction="#golast" text="&gt;|" />
-            <Button fx:id="btnfirst" layoutX="27.0" layoutY="10.0" mnemonicParsing="false" onAction="#gofirst" text="|&lt;" />
+                <TextField fx:id="txtpage" layoutX="106.0" layoutY="10.0" onAction="#changepage" prefHeight="26.0" prefWidth="36.0" />
+                <Button fx:id="betnlast" layoutX="220.0" layoutY="10.0" mnemonicParsing="false" onAction="#golast" text="&gt;|" />
+                <Button fx:id="btnfirst" layoutX="24.0" layoutY="10.0" mnemonicParsing="false" onAction="#gofirst" text="|&lt;" />
             </children></Pane>
-        <Pane fx:id="control1" layoutX="625.0" layoutY="665.0" prefHeight="42.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="625.0" AnchorPane.rightAnchor="455.0">
+        <Pane fx:id="control1" layoutX="625.0" layoutY="665.0" prefHeight="42.0" prefWidth="237.0" visible="false" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="625.0" AnchorPane.rightAnchor="418.0">
             <children>
-                <Button layoutX="126.0" layoutY="9.0" mnemonicParsing="false" onAction="#zoomIn" text="+" />
-                <Button layoutX="161.0" layoutY="9.0" mnemonicParsing="false" onAction="#zoomOut" text="-" />
-                <Button layoutY="9.0" mnemonicParsing="false" onAction="#remove" text="Löschen" />
-            <Button layoutX="78.0" layoutY="9.0" mnemonicParsing="false" onAction="#reset" text="Reset" />
+                <Button layoutX="136.0" layoutY="10.0" mnemonicParsing="false" onAction="#zoomIn" text="+" />
+                <Button layoutX="167.0" layoutY="10.0" mnemonicParsing="false" onAction="#zoomOut" text="-" />
+                <Button layoutY="10.0" mnemonicParsing="false" onAction="#remove" text="Löschen" />
+                <Button layoutX="78.0" layoutY="10.0" mnemonicParsing="false" onAction="#reset" text="Reset" />
             </children>
         </Pane>
-        <ScrollPane fx:id="pane" fitToHeight="true" fitToWidth="true" layoutX="625.0" layoutY="65.0" pannable="true" prefHeight="600.0" prefWidth="615.0" AnchorPane.bottomAnchor="55.0" AnchorPane.leftAnchor="625.0" AnchorPane.rightAnchor="39.799999999999955" AnchorPane.topAnchor="65.0">
-         <content>
-            <StackPane onScroll="#ScrollZoom" prefHeight="150.0" prefWidth="200.0">
-               <children>
-                      <ImageView fx:id="itemview" fitHeight="545.0" fitWidth="608.0" pickOnBounds="true" preserveRatio="true" />
-               </children>
-            </StackPane>
-         </content>
-        </ScrollPane>
-      <Label fx:id="lblinfo" layoutX="626.0" layoutY="50.0" text="Patient:">
-         <font>
-            <Font name="System Bold" size="12.0" />
-         </font></Label>
+        <Label fx:id="lblinfo" layoutX="607.0" layoutY="48.0" visible ="false" text="Patient:">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font></Label>
+        <SplitPane fx:id="spane" dividerPositions="0.5" layoutX="607.0" layoutY="67.0" prefHeight="587.0" prefWidth="648.0" AnchorPane.bottomAnchor="65.79999999999995" AnchorPane.leftAnchor="607.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="67.0">
+            <items>
+                <ScrollPane fx:id="pane" fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="600.0" prefWidth="615.0">
+                    <content>
+                        <StackPane onScroll="#ScrollZoom" prefHeight="150.0" prefWidth="200.0">
+                            <children>
+                                <ImageView fx:id="itemview" fitHeight="545.0" fitWidth="608.0" pickOnBounds="true" preserveRatio="true" />
+                            </children>
+                        </StackPane>
+                    </content>
+                </ScrollPane>
+                <ListView fx:id="thumbview" visible="false" maxWidth="0.0" minWidth="0.0" onMouseClicked="#setthumbpage" prefHeight="350.0" prefWidth="192.0" />
+            </items></SplitPane>
     </children>
 </AnchorPane>

@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -17,6 +18,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import javafx.scene.control.TreeView;
 
@@ -61,6 +63,10 @@ public class Controller implements Initializable {
     Label lblinfo = new Label();
     @FXML
     TextField txtpage = new TextField();
+    @FXML
+    ListView thumbview = new ListView();
+    @FXML
+    SplitPane spane = new SplitPane();
 
 
     @Override
@@ -94,6 +100,8 @@ public class Controller implements Initializable {
     Image rootIcon = new Image("root.png");
     Image Image = new Image("image.png");
     Image PDF = new Image("pdf.png");
+    Image noFile = new Image("nofile.png");
+    Image noFilebig = new Image("nofilebig.png");
 
 
     //btnpath click event
@@ -116,22 +124,25 @@ public class Controller implements Initializable {
             if (f.isDirectory()) {                                                                                          //call the function recursively to put directories and files into TreeView
                 root.getChildren().add(getNodesForDirectory(f));
             } else if (f.getName().endsWith(".pdf")) {
-                root.getChildren().add(new TreeItem<String>(f.getName(), new ImageView(PDF)));
-            }else{
-                root.getChildren().add(new TreeItem<String>(f.getName(), new ImageView(Image)));
-            }
+                root.getChildren().add(new TreeItem<String>(f.getName(),new ImageView(PDF)));
+            } else if (f.getName().endsWith(".png")|f.getName().endsWith(".jpg")) {
+                root.getChildren().add(new TreeItem<String>(f.getName(),new ImageView(Image)));
+            } else
+                root.getChildren().add(new TreeItem<String>(f.getName(),new ImageView(noFile)));
         }
         return root;
     }
 
     public String getitempath() {                                                                                           //get path from selected TreeView item and return path type string
         if (view.getSelectionModel().getSelectedItem() != null){                                                            //check if user has selected a TreeItem to avoid exception
+            pane.setDisable(false);
+            lblinfo.setVisible(true);
 
             StringBuilder pathBuilder = new StringBuilder();                                                                //create StringBuilder to get the path from type string
             for (TreeItem<String> item = view.getSelectionModel().getSelectedItem();                                        //get ItemValue for every TreeItem
                  item != null&&item !=view.getRoot(); item = item.getParent()) {                                            //selected item may not be empty and not RootItem to avoid double root in path
 
-                pathBuilder.insert(0, item.getValue());                                                               //building path
+                pathBuilder.insert(0, item.getValue());                                                                     //building path
                 pathBuilder.insert(0, File.separator);
             }
 
@@ -144,6 +155,7 @@ public class Controller implements Initializable {
                 createImagesFromPDF(path);
                 control1.setVisible(true);
                 control2.setVisible(true);
+                showthumblist();
 
                 if (pics.size()<=1) {
                     control2.setDisable(true);
@@ -151,32 +163,35 @@ public class Controller implements Initializable {
                 else {
                     control2.setDisable(false);
                 }
-
-                lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue());
+                lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue()+" || "+"Dokument: "+view.getSelectionModel().getSelectedItem().getValue());
             }
             else if(path.endsWith(".png")|path.endsWith(".jpg")){                                                           //if pdf = false and it's an Image call getimage() method
                 reset();
                 getimage(path);
                 control1.setVisible(true);
                 control2.setVisible(false);                                                                                 //displaying page is not need for images
-                lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue());
+                lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue()+" || "+"Dokument: "+view.getSelectionModel().getSelectedItem().getValue());
+                hidethumblist();
             }else{
                 reset();
                 itemview.setImage(null);
                 control1.setVisible(false);
                 control2.setVisible(false);
+                hidethumblist();
+                pane.setDisable(true);
 
-                File f =new File(path);
+                File f = new File(path);
                 if (f.isFile()){
-                    Alert del = new Alert(Alert.AlertType.WARNING, "Dieses Dateiformat wird nicht unterstützt.", ButtonType.OK);
-                    del.show();
-                    txtpage.setText(String.valueOf(1));
+                    itemview.setImage(noFilebig);
+                    itemview.setFitHeight(itemview.getFitHeight()*0.3);
+                    itemview.setFitWidth(itemview.getFitWidth()*0.3);
+                    pane.setDisable(true);
+                    lblinfo.setText("Fehler: Dateiformat wird nicht unterstützt, bitte benutzen Sie nur Dateien vom Typ (.jpg | .png | .pdf) !");
                 }
             }
         }
         return path;
     }
-
     public void getimage(String path){                                                                                      //create image from TreeView selected item
         File picture = new File(path);
         if(picture.isFile()){                                                                                               //check if the requested file exists
@@ -187,7 +202,7 @@ public class Controller implements Initializable {
 
     private List<BufferedImage> createImagesFromPDF(String path){                                                           //convert PDF File to an Image using PDFBox | receives the path of type string
 
-        List<BufferedImage> images = new ArrayList<BufferedImage>();                                                                    //create array to write the converted pdf pages as image into the array
+        List<BufferedImage> images = new ArrayList<BufferedImage>();                                                        //create array to write the converted pdf pages as image into the array
         pics.clear();                                                                                                       //clear pics ArrayList<Image> to avoid problems with displaying PDF File in ImageView
         PDDocument pdf = null;
         index = 0;                                                                                                          //set index to 0 to display 1st page of the PDF File when clicking on it
@@ -196,15 +211,16 @@ public class Controller implements Initializable {
             pdf = PDDocument.load(is);                                                                                      //pdf requires type File which got from InputStream
             PDFRenderer pdfRenderer = new PDFRenderer(pdf);
             for (int page = 0; page < pdf.getNumberOfPages(); ++page) {                                                     //Create PDF Renderer (PDFBox) and render all PDF Pages to BufferedImages
-                BufferedImage img = pdfRenderer.renderImageWithDPI(page, 300, ImageType.RGB);
+                BufferedImage img = pdfRenderer.renderImageWithDPI(page, 200, ImageType.RGB);
                 images.add(img);                                                                                            //add buffered to the created array list
-                WritableImage writable = SwingFXUtils.toFXImage(images.get(page), null);                        //create a writable image from buffered image, to write it to ImageView
+                WritableImage writable = SwingFXUtils.toFXImage(images.get(page), null);                        			//create a writable image from buffered image, to write it to ImageView
                 pics.add(writable);                                                                                         //add writable image to new ArrayList "pics"
                 itemview.setImage(pics.get(index));                                                                         //set image to ImageView
                 settxtpage();
                 System.out.println(images.size());                                                                          //print size of pics ArrayList (only checking)
             }
             is.close();                                                                                                     //important to close InputStream if we want to delete a selected file later
+            setthumb();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -292,7 +308,7 @@ public class Controller implements Initializable {
         lblpage.setText("/ "+ String.valueOf(pics.size()));
     }
 
-    public void changepage(ActionEvent chp) {                                                                              //set "txtpage" TextField to index
+    public void changepage() {                                                                              //set "txtpage" TextField to index
         if(txtpage.getText().isEmpty()==false) {
             index = Integer.parseInt(txtpage.getText()) - 1;
             if (index >= 0 && index <= pics.size()-1) {                                                                    //-1 because Array is from 0-x
@@ -329,5 +345,39 @@ public class Controller implements Initializable {
                 System.err.println(x);
             }
         }
+    }
+
+    public void setthumb() {
+        thumbview.getItems().clear();
+        for (int i = 0; i < pics.size(); i++) {
+            ImageView thumb = new ImageView(pics.get(i));
+            Label la = new Label(String.valueOf(i+1));
+            StackPane sb = new StackPane();
+            sb.setAlignment(la, Pos.CENTER_LEFT);
+            sb.getChildren().addAll(thumb,la);
+            thumb.setFitHeight(192);
+            thumb.setFitWidth(128);
+            thumbview.getItems().addAll(sb);
+        }
+    }
+    public void setthumbpage() {
+        if(thumbview.getSelectionModel().getSelectedItem() != null){
+            txtpage.setText(String.valueOf(thumbview.getSelectionModel().getSelectedIndex()+1));
+            System.out.println(thumbview.getSelectionModel().getSelectedIndex()+1);
+            changepage();
+        }
+    }
+
+    public void showthumblist() {
+        thumbview.setVisible(true);
+        thumbview.setPrefWidth(192);
+        thumbview.setMaxWidth(192);
+        thumbview.setMinWidth(192);
+    }
+
+    public void hidethumblist() {
+        thumbview.setVisible(false);
+        thumbview.setMaxWidth(0);
+        thumbview.setMinWidth(0);
     }
 }

@@ -1,0 +1,29 @@
+.root{
+	-fx-background-color: #ffffff;
+}
+
+.button{
+	-fx-background-color: #29B6F6;
+	-fx-text-fill: #ffffff;
+}
+.button:hover{
+	-fx-background-color: #81D4FA;
+}
+.button:pressed{
+	-fx-background-color: #03A9F4;
+}
+.treeview{
+	-fx-background-color: #ffffff;
+	-fx-border-color: #E0E0E0;
+}
+
+.scroll-pane > .viewport {
+   -fx-background-color: transparent;
+}
+.scroll-pane{
+	-fx-background-color: #FAFAFA;
+	-fx-border-color: #E0E0E0;
+}
+.iconOpen > .label {
+    -fx-graphic: "trash.png";
+}
