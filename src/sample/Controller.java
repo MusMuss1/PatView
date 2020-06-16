@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -67,10 +68,53 @@ public class Controller implements Initializable {
     ListView thumbview = new ListView();
     @FXML
     SplitPane spane = new SplitPane();
+    @FXML
+    public Button btnpath = new Button();
+    public Button btnforward = new Button();
+    public Button btnback = new Button();
+    public Button btnfirst = new Button();
+    public Button btnlast = new Button();
+    public Button btnplus = new Button();
+    public Button btnminus = new Button();
+    public Button btnreset = new Button();
+    public Button btndelete = new Button();
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {                                                        //initialize and set size of ImageView to ScrollPane size
+
+        assert txtroot != null : "fx:id=\"btnback\" was not injected: Check your FXML file!";
+        assert view != null : "fx:id=\"myImage\" was not injected: Check your FXML file!";
+        assert itemview != null : "fx:id=\"itemview\" was not injected: Check your FXML file!";
+        assert pane != null : "fx:id=\"pane\" was not injected: Check your FXML file!";
+        assert control2 != null : "fx:id=\"control2\" was not injected: Check your FXML file!";
+        assert control1 != null : "fx:id=\"control1\" was not injected: Check your FXML file!";
+        assert lblpage != null : "fx:id=\"lblpage\" was not injected: Check your FXML file!";
+        assert lblinfo != null : "fx:id=\"lblinfo\" was not injected: Check your FXML file!";
+        assert txtpage != null : "fx:id=\"txtpage\" was not injected: Check your FXML file!";
+        assert thumbview != null : "fx:id=\"thumbview\" was not injected: Check your FXML file!";
+        assert spane != null : "fx:id=\"spane\" was not injected: Check your FXML file!";
+
+        assert btnpath != null : "fx:id=\"btnpath\" was not injected: Check your FXML file!";
+        assert btnforward != null : "fx:id=\"btnforward\" was not injected: Check your FXML file!";
+        assert btnback != null : "fx:id=\"btnback\" was not injected: Check your FXML file!";
+        assert btnfirst != null : "fx:id=\"btnfirst\" was not injected: Check your FXML file!";
+        assert btnlast != null : "fx:id=\"btnlast\" was not injected: Check your FXML file!";
+        assert btnplus != null : "fx:id=\"btnplus\" was not injected: Check your FXML file!";
+        assert btnminus != null : "fx:id=\"btnminus\" was not injected: Check your FXML file!";
+        assert btnreset != null : "fx:id=\"btnreset\" was not injected: Check your FXML file!";
+        assert btndelete != null : "fx:id=\"btndelete\" was not injected: Check your FXML file!";
+
+        btnpath.setTooltip(new Tooltip("Durchsuchen"));
+        btnforward.setTooltip(new Tooltip("Vor"));
+        btnback.setTooltip(new Tooltip("Zurück"));
+        btnfirst.setTooltip(new Tooltip("Erste Seite"));
+        btnlast.setTooltip(new Tooltip("Letzte Seite"));
+        btnplus.setTooltip(new Tooltip("Hineinzoomen"));
+        btnminus.setTooltip(new Tooltip("Herauszoomen"));
+        btnreset.setTooltip(new Tooltip("Zoom zurücksetzen"));
+        btndelete.setTooltip(new Tooltip("Löschen"));
+        txtpage.setTooltip(new Tooltip("Seite eintragen"));
 
         if (pane != null) {
             pane.widthProperty().addListener(new ChangeListener<Number>() {
@@ -142,7 +186,7 @@ public class Controller implements Initializable {
             for (TreeItem<String> item = view.getSelectionModel().getSelectedItem();                                        //get ItemValue for every TreeItem
                  item != null&&item !=view.getRoot(); item = item.getParent()) {                                            //selected item may not be empty and not RootItem to avoid double root in path
 
-                pathBuilder.insert(0, item.getValue());                                                                     //building path
+                pathBuilder.insert(0, item.getValue());                                                               //building path
                 pathBuilder.insert(0, File.separator);
             }
 
@@ -165,7 +209,7 @@ public class Controller implements Initializable {
                 }
                 lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue()+" || "+"Dokument: "+view.getSelectionModel().getSelectedItem().getValue());
             }
-            else if(path.endsWith(".png")|path.endsWith(".jpg")){                                                           //if pdf = false and it's an Image call getimage() method
+            else if(path.endsWith(".png")|path.endsWith(".jpg")){                                                           //if image call getimage() method + hide unneeded controls
                 reset();
                 getimage(path);
                 control1.setVisible(true);
@@ -173,25 +217,31 @@ public class Controller implements Initializable {
                 lblinfo.setText("Patient: "+view.getSelectionModel().getSelectedItem().getParent().getValue()+" || "+"Dokument: "+view.getSelectionModel().getSelectedItem().getValue());
                 hidethumblist();
             }else{
-                reset();
-                itemview.setImage(null);
-                control1.setVisible(false);
-                control2.setVisible(false);
-                hidethumblist();
-                pane.setDisable(true);
-
-                File f = new File(path);
-                if (f.isFile()){
-                    itemview.setImage(noFilebig);
-                    itemview.setFitHeight(itemview.getFitHeight()*0.3);
-                    itemview.setFitWidth(itemview.getFitWidth()*0.3);
-                    pane.setDisable(true);
-                    lblinfo.setText("Fehler: Dateiformat wird nicht unterstützt, bitte benutzen Sie nur Dateien vom Typ (.jpg | .png | .pdf) !");
-                }
+                otherfile();
             }
         }
         return path;
     }
+
+    public void otherfile(){
+        reset();																											//what we do if a folder is selected | hide all controls
+        itemview.setImage(null);
+        control1.setVisible(false);
+        control2.setVisible(false);
+        hidethumblist();
+        pane.setDisable(true);
+
+        //important if we have an unsupported file
+        File f = new File(path);																							//check if selected item is a file and not a folder(patient folder)
+        if (f.isFile()){
+            itemview.setImage(noFilebig);
+            itemview.setFitHeight(itemview.getFitHeight()*0.3);
+            itemview.setFitWidth(itemview.getFitWidth()*0.3);
+            pane.setDisable(true);
+            lblinfo.setText("Fehler: Dateiformat wird nicht unterstützt, bitte benutzen Sie nur Dateien vom Typ (.jpg | .png | .pdf) !"); //display message, to user
+        }
+    }
+
     public void getimage(String path){                                                                                      //create image from TreeView selected item
         File picture = new File(path);
         if(picture.isFile()){                                                                                               //check if the requested file exists
@@ -224,6 +274,8 @@ public class Controller implements Initializable {
         }
         catch (IOException e) {
             e.printStackTrace();
+            otherfile();
+            lblinfo.setText("Fehler: Die Datei ist möglicherweise defekt.");
         }
         try {
             pdf.close();
@@ -255,8 +307,7 @@ public class Controller implements Initializable {
             if(index>0){
                 index--;
             }else{
-                index=pics.size();
-                index--;
+                index=pics.size()-1;
             }
             itemview.setImage(pics.get(index));
         }catch (Exception e){
@@ -286,7 +337,7 @@ public class Controller implements Initializable {
         itemview.setFitWidth(itemview.getFitWidth()/1.1);
     }
 
-    public void ScrollZoom(ScrollEvent event) {                                                                                   //ZoomScrollEvent
+    public void ScrollZoom(ScrollEvent event) {                                                                             //ZoomScrollEvent
         double zoomFactor = 1.1;                                                                                            //define zoomfaktor
         double deltaY = event.getDeltaY();                                                                                  //get Scrollingvalue as double for up and down
 
@@ -308,7 +359,7 @@ public class Controller implements Initializable {
         lblpage.setText("/ "+ String.valueOf(pics.size()));
     }
 
-    public void changepage() {                                                                              //set "txtpage" TextField to index
+    public void changepage() {                                                                              				//set "txtpage" TextField to index
         if(txtpage.getText().isEmpty()==false) {
             index = Integer.parseInt(txtpage.getText()) - 1;
             if (index >= 0 && index <= pics.size()-1) {                                                                    //-1 because Array is from 0-x
@@ -341,12 +392,12 @@ public class Controller implements Initializable {
             } catch (DirectoryNotEmptyException x) {
                 System.err.format("%s not empty%n", path);
             } catch (IOException x) {
-                // File permission problems are caught here.
-                System.err.println(x);
+                System.err.println(x);																						// File permission problems
             }
         }
     }
 
+    //write PDF images (pages) from Image Array to ListView
     public void setthumb() {
         thumbview.getItems().clear();
         for (int i = 0; i < pics.size(); i++) {
@@ -360,6 +411,7 @@ public class Controller implements Initializable {
             thumbview.getItems().addAll(sb);
         }
     }
+    //browse to selected page from ListView
     public void setthumbpage() {
         if(thumbview.getSelectionModel().getSelectedItem() != null){
             txtpage.setText(String.valueOf(thumbview.getSelectionModel().getSelectedIndex()+1));
@@ -367,14 +419,14 @@ public class Controller implements Initializable {
             changepage();
         }
     }
-
+    //show thumdaillist
     public void showthumblist() {
         thumbview.setVisible(true);
         thumbview.setPrefWidth(192);
         thumbview.setMaxWidth(192);
         thumbview.setMinWidth(192);
     }
-
+    //hide thumbdaillist
     public void hidethumblist() {
         thumbview.setVisible(false);
         thumbview.setMaxWidth(0);
